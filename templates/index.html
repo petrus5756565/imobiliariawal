@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block titulo %}{{ site.nome }} - Início{% endblock %}
+
+{% block conteudo %}
+<section class="hero">
+  <div class="container">
+    <h1>Encontre o imóvel ideal para você</h1>
+    <p>Compra, venda e locação com atendimento próximo e de confiança.</p>
+  </div>
+</section>
+
+<div class="container">
+  <div class="caixa-busca">
+    <div class="abas-finalidade">
+      <a href="{{ url_for('index', finalidade='venda') }}" class="{{ 'ativa' if finalidade_filtro == 'venda' else '' }}">Comprar</a>
+      <a href="{{ url_for('index', finalidade='locacao') }}" class="{{ 'ativa' if finalidade_filtro == 'locacao' else '' }}">Alugar</a>
+      <a href="{{ url_for('index') }}" class="{{ 'ativa' if not finalidade_filtro else '' }}">Todos</a>
+    </div>
+    <form class="busca" method="get" action="{{ url_for('index') }}">
+      <input type="hidden" name="finalidade" value="{{ finalidade_filtro }}">
+      <select name="tipo">
+        <option value="">Tipo de imóvel</option>
+        {% for c in categorias %}
+          <option value="{{ c }}" {{ 'selected' if tipo_filtro == c else '' }}>{{ c }}</option>
+        {% endfor %}
+      </select>
+      <select name="cidade">
+        <option value="">Cidade</option>
+        {% for c in cidades %}
+          <option value="{{ c }}" {{ 'selected' if cidade_filtro == c else '' }}>{{ c }}</option>
+        {% endfor %}
+      </select>
+      <select name="bairro">
+        <option value="">Bairro</option>
+        {% for b in bairros %}
+          <option value="{{ b }}" {{ 'selected' if bairro_filtro == b else '' }}>{{ b }}</option>
+        {% endfor %}
+      </select>
+      <select name="valor">
+        <option value="">Faixa de valor</option>
+        <option value="ate230" {{ 'selected' if valor_filtro == 'ate230' else '' }}>Até R$ 230.000</option>
+        <option value="230-350" {{ 'selected' if valor_filtro == '230-350' else '' }}>R$ 230.000 a R$ 350.000</option>
+        <option value="350-500" {{ 'selected' if valor_filtro == '350-500' else '' }}>R$ 350.000 a R$ 500.000</option>
+        <option value="500-750" {{ 'selected' if valor_filtro == '500-750' else '' }}>R$ 500.000 a R$ 750.000</option>
+        <option value="750-1000" {{ 'selected' if valor_filtro == '750-1000' else '' }}>R$ 750.000 a R$ 1.000.000</option>
+        <option value="1000-1500" {{ 'selected' if valor_filtro == '1000-1500' else '' }}>R$ 1.000.000 a R$ 1.500.000</option>
+        <option value="1500-3000" {{ 'selected' if valor_filtro == '1500-3000' else '' }}>R$ 1.500.000 a R$ 3.000.000</option>
+        <option value="acima3000" {{ 'selected' if valor_filtro == 'acima3000' else '' }}>Acima de R$ 3.000.000</option>
+      </select>
+      <button type="submit" class="btn btn-primario">Buscar</button>
+    </form>
+  </div>
+</div>
+
+<section class="secao">
+  <div class="container">
+    <div class="secao-titulo">
+      <h2>Imóveis disponíveis</h2>
+      <p>{{ imoveis|length }} imóvel(is) encontrado(s)</p>
+      <div class="linha-dourada"></div>
+    </div>
+
+    {% if imoveis %}
+    <div class="grade-imoveis">
+      {% for im in imoveis %}
+      <a class="card-imovel" href="{{ url_for('ver_imovel', imovel_id=im.id) }}">
+        <div class="foto" style="{% if im.fotos %}background-image:url('{{ url_for('static', filename='uploads/' ~ im.id ~ '/' ~ im.fotos[0]) }}')" {% endif %}>
+          <span class="selo {{ 'locacao' if im.tipo == 'locacao' else '' }}">
+            {{ 'Locação' if im.tipo == 'locacao' else 'Venda' }}
+          </span>
+        </div>
+        <div class="corpo">
+          <h3>{{ im.titulo }}</h3>
+          <div class="local">{{ im.bairro }}, {{ im.cidade }}</div>
+          <div class="preco">{{ im.preco|moeda }}{% if im.tipo == 'locacao' %}/mês{% endif %}</div>
+          <div class="caracteristicas">
+            {% if im.quartos %}<span>&#128716; {{ im.quartos }} qtos</span>{% endif %}
+            {% if im.banheiros %}<span>&#128703; {{ im.banheiros }} ban</span>{% endif %}
+            {% if im.vagas %}<span>&#128663; {{ im.vagas }} vagas</span>{% endif %}
+            {% if im.area_construida %}<span>&#128207; {{ im.area_construida }} m²</span>{% endif %}
+          </div>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="vazio">
+      <p>Nenhum imóvel encontrado com esses filtros. Tente ajustar a busca.</p>
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

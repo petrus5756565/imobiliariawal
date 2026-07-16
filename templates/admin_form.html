@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+{% block titulo %}{{ 'Editar imóvel' if imovel else 'Novo imóvel' }} - {{ site.nome }}{% endblock %}
+
+{% block conteudo %}
+<div class="painel-admin">
+  <div class="cabecalho-admin">
+    <h1 style="font-size:22px; margin:0;">{{ 'Editar imóvel' if imovel else 'Novo imóvel' }}</h1>
+    <a class="btn btn-secundario" href="{{ url_for('admin_dashboard') }}">Voltar ao painel</a>
+  </div>
+
+  <form method="post" enctype="multipart/form-data" class="pagina-form" style="max-width:none; margin:0;">
+    <div class="campo">
+      <label for="titulo">Título do anúncio</label>
+      <input type="text" id="titulo" name="titulo" required value="{{ imovel.titulo if imovel else '' }}">
+    </div>
+
+    <div class="grade-campos-2">
+      <div class="campo">
+        <label for="tipo">Finalidade</label>
+        <select id="tipo" name="tipo">
+          <option value="venda" {{ 'selected' if imovel and imovel.tipo == 'venda' else '' }}>Venda</option>
+          <option value="locacao" {{ 'selected' if imovel and imovel.tipo == 'locacao' else '' }}>Locação</option>
+        </select>
+      </div>
+      <div class="campo">
+        <label for="categoria">Categoria</label>
+        <input type="text" id="categoria" name="categoria" placeholder="Apartamento, Casa, Terreno..."
+               value="{{ imovel.categoria if imovel else '' }}">
+      </div>
+    </div>
+
+    <div class="grade-campos-2">
+      <div class="campo">
+        <label for="preco">Preço (R$)</label>
+        <input type="text" id="preco" name="preco" placeholder="350000" value="{{ imovel.preco if imovel else '' }}">
+      </div>
+      <div class="campo">
+        <label for="whatsapp">WhatsApp para contato (opcional)</label>
+        <input type="text" id="whatsapp" name="whatsapp" placeholder="55DDDNUMERO"
+               value="{{ imovel.whatsapp if imovel else '' }}">
+      </div>
+    </div>
+
+    <div class="grade-campos-2">
+      <div class="campo">
+        <label for="cidade">Cidade</label>
+        <input type="text" id="cidade" name="cidade" value="{{ imovel.cidade if imovel else '' }}">
+      </div>
+      <div class="campo">
+        <label for="bairro">Bairro</label>
+        <input type="text" id="bairro" name="bairro" value="{{ imovel.bairro if imovel else '' }}">
+      </div>
+    </div>
+
+    <div class="grade-campos">
+      <div class="campo">
+        <label for="quartos">Quartos</label>
+        <input type="text" id="quartos" name="quartos" value="{{ imovel.quartos if imovel else '' }}">
+      </div>
+      <div class="campo">
+        <label for="suites">Suítes</label>
+        <input type="text" id="suites" name="suites" value="{{ imovel.suites if imovel else '' }}">
+      </div>
+      <div class="campo">
+        <label for="banheiros">Banheiros</label>
+        <input type="text" id="banheiros" name="banheiros" value="{{ imovel.banheiros if imovel else '' }}">
+      </div>
+    </div>
+
+    <div class="grade-campos-2">
+      <div class="campo">
+        <label for="vagas">Vagas de garagem</label>
+        <input type="text" id="vagas" name="vagas" value="{{ imovel.vagas if imovel else '' }}">
+      </div>
+      <div class="campo">
+        <label for="area_construida">Área construída (m²)</label>
+        <input type="text" id="area_construida" name="area_construida" value="{{ imovel.area_construida if imovel else '' }}">
+      </div>
+    </div>
+
+    <div class="campo">
+      <label for="area_terreno">Área do terreno (m²)</label>
+      <input type="text" id="area_terreno" name="area_terreno" value="{{ imovel.area_terreno if imovel else '' }}">
+    </div>
+
+    <div class="campo">
+      <label for="descricao">Descrição</label>
+      <textarea id="descricao" name="descricao">{{ imovel.descricao if imovel else '' }}</textarea>
+    </div>
+
+    <div class="campo checkbox-linha">
+      <input type="checkbox" id="destaque" name="destaque" {{ 'checked' if imovel and imovel.destaque else '' }}>
+      <label for="destaque" style="margin:0;">Destacar este imóvel</label>
+    </div>
+
+    <div class="campo">
+      <label for="fotos">Fotos (pode selecionar várias)</label>
+      <input type="file" id="fotos" name="fotos" multiple accept="image/*">
+    </div>
+
+    {% if imovel and imovel.fotos %}
+    <div class="campo">
+      <label>Fotos já cadastradas</label>
+      <div class="miniaturas-form">
+        {% for f in imovel.fotos %}
+        <div class="mini">
+          <img src="{{ url_for('static', filename='uploads/' ~ imovel.id ~ '/' ~ f) }}">
+          <form method="post" action="{{ url_for('admin_excluir_foto', imovel_id=imovel.id, foto=f) }}"
+                onsubmit="return confirm('Remover esta foto?');">
+            <button type="submit" title="Remover foto">&times;</button>
+          </form>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+    <button type="submit" class="btn btn-primario btn-bloco">
+      {{ 'Salvar alterações' if imovel else 'Cadastrar imóvel' }}
+    </button>
+  </form>
+</div>
+{% endblock %}

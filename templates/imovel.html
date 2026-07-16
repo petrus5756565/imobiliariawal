@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block titulo %}{{ imovel.titulo }} - {{ site.nome }}{% endblock %}
+
+{% block conteudo %}
+<div class="container" style="padding-top:30px;">
+  <div class="imovel-topo">
+    <div class="galeria-principal">
+      {% if imovel.fotos %}
+        <div class="foto-grande" id="foto-grande" style="background-image:url('{{ url_for('static', filename='uploads/' ~ imovel.id ~ '/' ~ imovel.fotos[0]) }}')"></div>
+        {% if imovel.fotos|length > 1 %}
+        <div class="galeria-miniaturas">
+          {% for f in imovel.fotos %}
+          <img src="{{ url_for('static', filename='uploads/' ~ imovel.id ~ '/' ~ f) }}"
+               onclick="document.getElementById('foto-grande').style.backgroundImage = \"url('{{ url_for('static', filename='uploads/' ~ imovel.id ~ '/' ~ f) }}')\"">
+          {% endfor %}
+        </div>
+        {% endif %}
+      {% else %}
+        <div class="foto-grande"></div>
+      {% endif %}
+    </div>
+
+    <div class="painel-lateral">
+      <span class="selo {{ 'locacao' if imovel.tipo == 'locacao' else '' }}">
+        {{ 'Locação' if imovel.tipo == 'locacao' else 'Venda' }}
+      </span>
+      <h1 style="font-size:20px; margin:12px 0 4px;">{{ imovel.titulo }}</h1>
+      <p style="color:var(--cinza); margin-bottom:14px;">{{ imovel.bairro }}, {{ imovel.cidade }}</p>
+      <div class="preco-grande">{{ imovel.preco|moeda }}{% if imovel.tipo == 'locacao' %}/mês{% endif %}</div>
+
+      <ul class="lista-caracteristicas">
+        {% if imovel.categoria %}<li><span>Tipo</span><strong>{{ imovel.categoria }}</strong></li>{% endif %}
+        {% if imovel.quartos %}<li><span>Quartos</span><strong>{{ imovel.quartos }}</strong></li>{% endif %}
+        {% if imovel.suites %}<li><span>Suítes</span><strong>{{ imovel.suites }}</strong></li>{% endif %}
+        {% if imovel.banheiros %}<li><span>Banheiros</span><strong>{{ imovel.banheiros }}</strong></li>{% endif %}
+        {% if imovel.vagas %}<li><span>Vagas</span><strong>{{ imovel.vagas }}</strong></li>{% endif %}
+        {% if imovel.area_construida %}<li><span>Área construída</span><strong>{{ imovel.area_construida }} m²</strong></li>{% endif %}
+        {% if imovel.area_terreno %}<li><span>Área do terreno</span><strong>{{ imovel.area_terreno }} m²</strong></li>{% endif %}
+      </ul>
+
+      <a class="btn btn-primario btn-bloco"
+         href="https://wa.me/{{ imovel.whatsapp or site.whatsapp }}?text=Ol%C3%A1%2C%20tenho%20interesse%20no%20im%C3%B3vel%3A%20{{ imovel.titulo|urlencode }}"
+         target="_blank" rel="noopener">
+        Falar no WhatsApp
+      </a>
+    </div>
+  </div>
+
+  <div class="bloco-descricao">
+    <h2>Descrição</h2>
+    <p>{{ imovel.descricao or "Sem descrição cadastrada." }}</p>
+  </div>
+</div>
+{% endblock %}

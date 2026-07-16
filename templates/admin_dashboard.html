@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block titulo %}Painel - {{ site.nome }}{% endblock %}
+
+{% block conteudo %}
+<div class="painel-admin">
+  <div class="cabecalho-admin">
+    <h1 style="font-size:22px; margin:0;">Meus imóveis</h1>
+    <a class="btn btn-primario" href="{{ url_for('admin_novo_imovel') }}">+ Novo imóvel</a>
+  </div>
+
+  {% if imoveis %}
+  <table class="tabela-admin">
+    <thead>
+      <tr>
+        <th>Título</th>
+        <th>Finalidade</th>
+        <th>Cidade / Bairro</th>
+        <th>Preço</th>
+        <th>Fotos</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for im in imoveis %}
+      <tr>
+        <td>{{ im.titulo }}</td>
+        <td>{{ 'Locação' if im.tipo == 'locacao' else 'Venda' }}</td>
+        <td>{{ im.bairro }}, {{ im.cidade }}</td>
+        <td>{{ im.preco|moeda }}</td>
+        <td>{{ im.fotos|length }}</td>
+        <td class="acoes">
+          <a class="btn btn-secundario btn-sm" href="{{ url_for('ver_imovel', imovel_id=im.id) }}" target="_blank">Ver</a>
+          <a class="btn btn-dourado btn-sm" href="{{ url_for('admin_editar_imovel', imovel_id=im.id) }}">Editar</a>
+          <form method="post" action="{{ url_for('admin_excluir_imovel', imovel_id=im.id) }}"
+                onsubmit="return confirm('Tem certeza que deseja excluir este imóvel?');">
+            <button type="submit" class="btn btn-perigo btn-sm">Excluir</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="vazio">
+    <p>Nenhum imóvel cadastrado ainda.</p>
+    <a class="btn btn-primario" href="{{ url_for('admin_novo_imovel') }}">Cadastrar o primeiro imóvel</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block titulo %}{{ site.nome }}{% endblock %}</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<div class="topo-contato">
+  <div class="container">
+    <div class="infos">
+      <span>&#9742; {{ site.telefone_fixo }}</span>
+      <span>&#128241; Plantão: {{ site.plantao }}</span>
+      <span>&#9993; {{ site.email }}</span>
+    </div>
+    <div class="redes">
+      <a href="{{ site.facebook }}" target="_blank" rel="noopener">f</a>
+      <a href="{{ site.instagram }}" target="_blank" rel="noopener">i</a>
+      <a href="{{ site.youtube }}" target="_blank" rel="noopener">y</a>
+    </div>
+  </div>
+</div>
+
+<header class="principal">
+  <div class="container">
+    <a href="{{ url_for('index') }}" class="marca">
+      <img class="logo" src="{{ url_for('static', filename='img/logo.jpeg') }}" alt="{{ site.nome }}">
+    </a>
+    <nav class="menu">
+      <a href="{{ url_for('index') }}">Início</a>
+      <a href="{{ url_for('index', finalidade='venda') }}">Comprar</a>
+      <a href="{{ url_for('index', finalidade='locacao') }}">Alugar</a>
+      {% if session.get('usuario') %}
+        <a href="{{ url_for('admin_dashboard') }}">Painel</a>
+        <a href="{{ url_for('logout') }}">Sair</a>
+      {% else %}
+        <a href="{{ url_for('login') }}" class="btn btn-primario">Área da Corretora</a>
+      {% endif %}
+      <a href="https://wa.me/{{ site.whatsapp }}" target="_blank" rel="noopener" class="btn btn-dourado">
+        WhatsApp
+      </a>
+    </nav>
+  </div>
+</header>
+
+<div class="flashes">
+  {% with mensagens = get_flashed_messages(with_categories=true) %}
+    {% for categoria, msg in mensagens %}
+      <div class="flash {{ categoria }}">{{ msg }}</div>
+    {% endfor %}
+  {% endwith %}
+</div>
+
+{% block conteudo %}{% endblock %}
+
+<footer>
+  <div class="container">
+    <div class="grade-rodape">
+      <div>
+        <h4>{{ site.nome }}</h4>
+        <p>{{ site.creci }}</p>
+        <p>{{ site.endereco }}<br>{{ site.cidade_uf }}</p>
+      </div>
+      <div>
+        <h4>Contato</h4>
+        <p>{{ site.telefone_fixo }}</p>
+        <p>WhatsApp: {{ site.whatsapp_exibicao }}</p>
+        <p>{{ site.email }}</p>
+      </div>
+      <div>
+        <h4>Links</h4>
+        <p><a href="{{ url_for('index', finalidade='venda') }}">Imóveis à venda</a></p>
+        <p><a href="{{ url_for('index', finalidade='locacao') }}">Imóveis para locação</a></p>
+        <p><a href="{{ url_for('login') }}">Área da corretora</a></p>
+      </div>
+    </div>
+    <div class="base">
+      &copy; {{ 2026 }} {{ site.nome }} — Todos os direitos reservados.
+    </div>
+  </div>
+</footer>
+
+<a class="whatsapp-flutuante" href="https://wa.me/{{ site.whatsapp }}" target="_blank" rel="noopener" title="Fale no WhatsApp">
+  &#9742;
+</a>
+
+</body>
+</html>
